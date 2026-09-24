@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Monthly Article Count Chart</title>
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chart-container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chart-container">
+        <h1>Monthly Article Count Chart</h1>
+        <div id="apexColumnChart"></div> <!-- Chart -->
+    </div>
+
+    
+    <script>
+        if (typeof ApexCharts !== 'undefined') {
+            console.log('ApexCharts loaded.');
+            
+            
+            fetch('http://127.0.0.1:8002/api/scraper/articles/monthly/')
+                .then(response => response.json())
+                .then(data => {
+                    const months = data.map(item => item.month);
+                    const articleCounts = data.map(item => item.article_count);
+
+                    
+                    var apexColumnChartOptions = {
+                        chart: {
+                            height: 350,
+                            type: 'bar'
+                        },
+                        title: {
+                            text: 'Monthly Article Count',
+                            align: 'center'
+                        },
+                        plotOptions: {
+                            bar: {
+                                horizontal: false,
+                                columnWidth: '55%',
+                                endingShape: 'rounded'
+                            },
+                        },
+                        dataLabels: { enabled: false },
+                        stroke: {
+                            show: true,
+                            width: 2,
+                            colors: ['transparent']
+                        },
+                        colors: ['#1E90FF'],
+                        series: [
+                            { name: 'Article Count', data: articleCounts }
+                        ],
+                        xaxis: { categories: months },
+                        yaxis: {
+                            title: {
+                                text: 'Article Count'
+                            }
+                        },
+                        fill: { opacity: 1 },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return val + " Article";
+                                }
+                            }
+                        }
+                    };
+
+                    
+                    var apexColumnChart = new ApexCharts(
+                        document.querySelector('#apexColumnChart'),
+                        apexColumnChartOptions
+                    );
+                    apexColumnChart.render();
+                })
+                .catch(error => console.error('API Error:', error));
+
+        } else {
+            console.error('ApexCharts done!');
+        }
+    </script>
+
+</body>
+</html>

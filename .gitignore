@@ -1,1 +1,5 @@
 venv/
+*.log
+*.zip
+project/db_clean.json
+project/celerybeat-schedule
